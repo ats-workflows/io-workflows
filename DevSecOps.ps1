@@ -69,7 +69,7 @@ Write-Host "=========="
 $IOProject = IO_QueryProjectsByName $IOURL $IOToken $ProjectName
 if ($IOProject -eq $null){
   Write-Host "No project exists by name: $ProjectName"
-  $IOProject = IO_CreateProject $IOURL $IOToken $ProjectName
+  $IOProject = IO_CreateProject $IOURL $IOToken $ProjectName $ProjectLanguage
   Write-Host "$IOProject"
   Write-Host "Created project by name: $ProjectName with the default (high-risk) profile - manual edit of the project's configuration requried."
 }
