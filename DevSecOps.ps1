@@ -8,6 +8,8 @@ Param(
   $IOToken = "",
   $PolarisURL = "",
   $PolarisToken = "",
+  $CodeDxURL = "",
+  $CodeDxToken = "",
   $RepositoryOwner = "",
   $RepositoryName = "",
   $BranchName = "",
@@ -33,11 +35,17 @@ $IOBaseCommand_Windows = "io.exe "
 #>
 . "$PWD/.synopsys/IntelligentOrchestration.ps1"
 . "$PWD/.synopsys/Polaris.ps1"
+. "$PWD/.synopsys/CodeDx.ps1"
 #---------------------------------------------------------------------------------------------------
 
-# Normalize IO URL (convert to base URL)
-$IOURL = IO_NormalizeURL $IOURL
 # Authenticate with Polaris (Use access token to get JWT - required for subsequent Polaris API calls)
 $PolarisJWT = Polaris_Authenticate $PolarisURL $PolarisToken
 #---------------------------------------------------------------------------------------------------
 
+<#
+## Health Checks
+#>
+IO_HealthCheck $IOURL
+Dx_HealthCheck $CodeDxURL
+Polaris_HealthCheck $PolarisURL $PolarisJWT
+#---------------------------------------------------------------------------------------------------
