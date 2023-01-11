@@ -10,12 +10,13 @@ Param(
   $PolarisToken = "",
   $CodeDxURL = "",
   $CodeDxToken = "",
+  $GitHubUserName = "",
+  $GitHubAccessToken = "",
   $RepositoryOwner = "",
   $RepositoryName = "",
   $ProjectName = "",
   $BranchName = "",
-  $GitHubUserName = "",
-  $GitHubAccessToken = "",
+  $ProjectLanguage = "",
   $VerboseOption = "")
 #---------------------------------------------------------------------------------------------------
 
@@ -57,6 +58,7 @@ Polaris_HealthCheck $PolarisURL $PolarisJWT
 Write-Host "=========="
 Write-Host "Project Name: $ProjectName"
 Write-Host "Branch Name: $BranchName"
+Write-Host "Project Language: $ProjectLanguage"
 Write-Host "Repository Owner Name: $RepositoryOwner"
 Write-Host "Repository Name: $RepositoryName"
 Write-Host "=========="
@@ -64,3 +66,10 @@ Write-Host "=========="
 <#
 ## Intelligent Orchestration - Onboarding
 #>
+$IOProject = IO_QueryProjectsByName $IOURL $IOToken $ProjectName
+if ($IOProject -eq $null){
+  Write-Host "No project exists by name: $ProjectName"
+  $IOProject = IO_CreateProject $IOURL $IOToken $ProjectName
+  Write-Host "$IOProject"
+  Write-Host "Created project by name: $ProjectName with the default (high-risk) profile - manual edit of the project's configuration requried."
+}
