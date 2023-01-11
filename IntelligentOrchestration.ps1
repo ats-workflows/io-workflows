@@ -205,7 +205,7 @@ Function IO_CreateProject() {
   $Body = "{`"name`":`"$ProjectName`",`"buildSystem`":`"$BuildSystem`",`"fileChangeThreshold`":$FileChangeThreshold,`"platformVersion`":`"$PlatformVersion`",`"projectLanguage`":`"$ProjectLanguage`",`"projectType`":`"$ProjectType`",`"sensitivePackagePattern`":`"$SensitivePackagePattern`",`"prescanPolicyId`":`"$PreScanPolicyId`",`"postScanPolicyId`":`"$PostScanPolicyId`",`"riskProfilePolicyId`":`"$RiskProfilePolicyId`"}"
 
   $ProjectResponse = Invoke-RestMethod "$IOURL/api/ioiq/api/portfolio/projects" -Method 'POST' -Headers $Headers -Body $Body
-  $ProjectResponse | ConvertFrom-Json
+  Write-Verbose "Project created. Id: $($ProjectResponse.id)"
 
   return $ProjectResponse
 }
