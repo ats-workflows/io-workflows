@@ -70,5 +70,7 @@ $IOProject = IO_QueryProjectsByName $IOURL $IOToken $ProjectName
 if ($IOProject -eq $null){
   Write-Host "No project exists by name: $ProjectName"
   $IOProject = IO_CreateProject $IOURL $IOToken $ProjectName $ProjectLanguage
-  Write-Host "Created project by name: $ProjectName with the default (high-risk) profile - manual edit of the project's configuration requried."
+  Write-Host "Created project by name: $ProjectName with the default properties and policies - a manual edit of the project's configuration is requried."
+} else {
+  Write-Host "$ProjectName exists on IO."
 }
