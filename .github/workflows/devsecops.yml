@@ -44,8 +44,8 @@ jobs:
         $ProjectName = ("${{ inputs.project-name }}" -eq ".") ? "${{ github.repository_owner }}/${{ github.event.repository.name }}" : "${{ inputs.project-name }}"
         $BranchName = ("${{ inputs.branch-name }}" -eq ".") ? "${{ github.ref_name }}" : "${{ inputs.branch-name }}"
         
-        Add-Content $GITHUB_ENV "ProjectName=$ProjectName"
-        Add-Content $GITHUB_ENV "BranchName=$BranchName"
+        echo "PROJECT_NAME=$ProjectName" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+        echo "BRANCH_NAME=$BranchName" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
     - name: Synopsys DevSecOps
       run: |
@@ -58,7 +58,7 @@ jobs:
           -CodeDxToken ${{ secrets.CODEDX_TOKEN }} \
           -RepositoryOwner ${{ github.repository_owner }} \
           -RepositoryName ${{ github.event.repository.name }} \
-          -ProjectName ${{ env.ProjectName }} \
+          -ProjectName $PROJECT_NAME \
           -BranchName ${{ env.BranchName }} \
           -GitHubUserName ${{ github.actor }} \
           -GitHubAccessToken ${{ secrets.SCM_TOKEN }} \
