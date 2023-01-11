@@ -1,0 +1,47 @@
+name: Synopsys DevSecOps
+
+on:
+  workflow_call:
+     inputs:
+      verbose-option:
+        default: 'SilentlyContinue' # Options: 'Continue' (debug logging enabled) or 'SilentlyContinue' (debug logging disabled)
+        required: false
+        type: string
+
+jobs:
+  synopsys-devsecops:
+    name: Synopsys DevSecOps
+    runs-on: self-hosted
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    
+    steps:
+    - name: Checkout Project Repository
+      uses: actions/checkout@v3
+      with: # Polaris PRs, Warning: [hxghq51d] HEAD is detached for this repo, using heuristics to find Git branch (branches show as /pull/1/merge where number is the PR number).
+        fetch-depth: 2
+      
+    - name: Checkout Synopsys Workflow
+      uses: actions/checkout@v3
+      with:
+        repository: io-onboard/synopsys-workflows
+        ref: main
+        path: .synopsys
+        token: ${{ secrets.SCM_TOKEN }}
+
+    - name: Synopsys DevSecOps
+      id: synopsys
+      run: |
+        pwsh .synopsys/io-devsecops.ps1 \
+          -IOURL ${{ secrets.IO_URL }} \
+          -IOToken ${{ secrets.IO_TOKEN }} \
+          -PolarisURL ${{ secrets.POLARIS_URL }} \
+          -PolarisToken ${{ secrets.POLARIS_TOKEN }} \
+          -RepositoryOwner ${{ github.repository_owner }} \
+          -RepositoryName ${{ github.event.repository.name }} \
+          -BranchName ${{ github.ref_name }} \
+          -GitHubUserName ${{ github.actor }} \
+          -GitHubAccessToken ${{ secrets.SCM_TOKEN }} \
+          -VerboseOption "SilentlyContinue"
