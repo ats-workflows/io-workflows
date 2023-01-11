@@ -12,6 +12,7 @@ Param(
   $CodeDxToken = "",
   $RepositoryOwner = "",
   $RepositoryName = "",
+  $ProjectName = "",
   $BranchName = "",
   $GitHubUserName = "",
   $GitHubAccessToken = "",
@@ -49,3 +50,17 @@ IO_HealthCheck $IOURL
 Dx_HealthCheck $CodeDxURL
 Polaris_HealthCheck $PolarisURL $PolarisJWT
 #---------------------------------------------------------------------------------------------------
+
+<#
+## Inputs
+#>
+Write-Host "=========="
+Write-Host "Project Name: $ProjectName"
+Write-Host "Branch Name: $BranchName"
+Write-Host "Repository Owner Name: $RepositoryOwner"
+Write-Host "Repository Name: $RepositoryName"
+Write-Host "=========="
+
+<#
+## Intelligent Orchestration - Onboarding
+#>
