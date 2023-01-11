@@ -84,24 +84,24 @@ Function IO_QueryProjectsByName() {
   $Headers.Add("Connection", "keep-alive")
   $Headers.Add("Authorization", "Bearer $IOToken")
 
-  $IOProjectResponse = Invoke-RestMethod "$IOURL/api/ioiq/api/portfolio/projects?_limit=$QueryLimit&_offset=$QueryOffset&_filter=name=ilike=$ProjectName" -Method 'GET' -Headers $Headers
-  $ProjectList = $IOProjectResponse._items
+  $ProjectResponse = Invoke-RestMethod "$IOURL/api/ioiq/api/portfolio/projects?_limit=$QueryLimit&_offset=$QueryOffset&_filter=name=ilike=$ProjectName" -Method 'GET' -Headers $Headers
+  $ProjectList = $ProjectResponse._items
   $ProjectCount = $ProjectList.Count
 
   if($ProjectCount -eq 0) {
-    Write-Verbose "No projects found using $IOProjectName as the project-name query."
+    Write-Verbose "No projects found using $ProjectName as the project-name query."
     return $null
   }
 
-  Write-Verbose "$ProjectCount projects found using $IOProjectName as the project-name query, with a query limit of $QueryLimit."
+  Write-Verbose "$ProjectCount projects found using $ProjectName as the project-name query, with a query limit of $QueryLimit."
   ForEach ($Project in $ProjectList) {
-    if ($IOProjectName -eq $($Project.name)) {
+    if ($ProjectName -eq $($Project.name)) {
       Write-Verbose "Found project matching $IOProjectName by name."
       return $Project
     }
   }
 
-  Write-Verbose "No projects exact-matched using $IOProjectName as the project-name query."
+  Write-Verbose "No projects exact-matched using $ProjectName as the project-name query."
   return $null
 }
 
