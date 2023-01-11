@@ -204,8 +204,8 @@ Function IO_CreateProject() {
   
   $Body = "{`"name`":`"$ProjectName`",`"buildSystem`":`"$BuildSystem`",`"fileChangeThreshold`":$FileChangeThreshold,`"platformVersion`":`"$PlatformVersion`",`"projectLanguage`":`"$ProjectLanguage`",`"projectType`":`"$ProjectType`",`"sensitivePackagePattern`":`"$SensitivePackagePattern`",`"prescanPolicyId`":`"$PreScanPolicyId`",`"postScanPolicyId`":`"$PostScanPolicyId`",`"riskProfilePolicyId`":`"$RiskProfilePolicyId`"}"
 
-  $ProjectResponse = Invoke-RestMethod "$IOURL/api/ioiq/api/portfolio/projects" -Method 'GET' -Headers $Headers -Body $Body
-  $ProjectResponse | CovertTo-Json
+  $ProjectResponse = Invoke-RestMethod "$IOURL/api/ioiq/api/portfolio/projects" -Method 'POST' -Headers $Headers -Body $Body
+  $ProjectResponse | ConvertTo-Json
 
   return $ProjectResponse
 }
