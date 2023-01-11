@@ -39,9 +39,11 @@ jobs:
           -IOToken ${{ secrets.IO_TOKEN }} \
           -PolarisURL ${{ secrets.POLARIS_URL }} \
           -PolarisToken ${{ secrets.POLARIS_TOKEN }} \
+          -CodeDxURL ${{ secrets.CODEDX_URL }} \
+          -CodeDxToken ${{ secrets.CODEDX_TOKEN }} \
           -RepositoryOwner ${{ github.repository_owner }} \
           -RepositoryName ${{ github.event.repository.name }} \
           -BranchName ${{ github.ref_name }} \
           -GitHubUserName ${{ github.actor }} \
           -GitHubAccessToken ${{ secrets.SCM_TOKEN }} \
-          -VerboseOption "SilentlyContinue"
+          -VerboseOption ${{ inputs.verbose-option }}
