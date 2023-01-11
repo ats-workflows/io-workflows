@@ -42,7 +42,7 @@ jobs:
     - name: Synopsys DevSecOps
       id: synopsys
       shell: pwsh
-      run: |
+      run: >
         $ProjectName = (${{ inputs.project-name }} -eq ".") ? "${{ github.repository_owner }}/${{ github.event.repository.name }" : "${{ inputs.project-name }}"
         $BranchName = (${{ inputs.branch-name }} -eq ".") ? "${{ github.ref_name }}" : "${{ inputs.branch-name }}"
         Write-Host $ProjectName
