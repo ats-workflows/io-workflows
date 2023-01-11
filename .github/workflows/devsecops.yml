@@ -34,7 +34,7 @@ jobs:
     - name: Synopsys DevSecOps
       id: synopsys
       run: |
-        pwsh .synopsys/io-devsecops.ps1 \
+        pwsh .synopsys/DevSecOps.ps1 \
           -IOURL ${{ secrets.IO_URL }} \
           -IOToken ${{ secrets.IO_TOKEN }} \
           -PolarisURL ${{ secrets.POLARIS_URL }} \
