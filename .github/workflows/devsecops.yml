@@ -12,7 +12,7 @@ on:
         required: false
         type: string
       verbose-option:
-        default: 'SilentlyContinue' # Options: 'Continue' (debug logging enabled) or 'SilentlyContinue' (debug logging disabled)
+        default: "Continue" # Options: 'Continue' (debug logging enabled) or 'SilentlyContinue' (debug logging disabled)
         required: false
         type: string
 
@@ -41,8 +41,10 @@ jobs:
 
     - name: Synopsys DevSecOps
       id: synopsys
-      shell: pwsh
       run: |
+        $ProjectName = ("${{ inputs.project-name }}" -eq ".") ? "${{ github.repository_owner }}/${{ github.event.repository.name }}" : "${{ inputs.project-name }}"
+        $BranchName = ("${{ inputs.branch-name }}" -eq ".") ? "${{ github.ref_name }}" : "${{ inputs.branch-name }}"
+
         pwsh .synopsys/DevSecOps.ps1 \
           -IOURL ${{ secrets.IO_URL }} \
           -IOToken ${{ secrets.IO_TOKEN }} \
