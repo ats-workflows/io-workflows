@@ -42,9 +42,6 @@ jobs:
     - name: Synopsys DevSecOps
       id: synopsys
       run: |
-        $ProjectName = ("${{ inputs.project-name }}" -eq ".") ? "${{ github.repository_owner }}/${{ github.event.repository.name }}" : "${{ inputs.project-name }}"
-        $BranchName = ("${{ inputs.branch-name }}" -eq ".") ? "${{ github.ref_name }}" : "${{ inputs.branch-name }}"
-
         pwsh .synopsys/DevSecOps.ps1 \
           -IOURL ${{ secrets.IO_URL }} \
           -IOToken ${{ secrets.IO_TOKEN }} \
