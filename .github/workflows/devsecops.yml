@@ -7,23 +7,22 @@ on:
         default: '.'
         required: false
         type: string
+        description: "Workflow will assume the calling repository's name unless this parameter is overridden with the target project-name to use."
       branch-name:
         default: '.'
         required: false
         type: string
+        description: "Workflow will assume the currently executing branch unless this parameter is overridden with the target branch to use."
       verbose-option:
-        default: "Continue" # Options: 'Continue' (debug logging enabled) or 'SilentlyContinue' (debug logging disabled)
+        default: "Continue"
         required: false
         type: string
+        description: "Toggle verbose logging. Options: 'Continue' (debug logging enabled) or 'SilentlyContinue' (debug logging disabled)"
 
 jobs:
   synopsys-devsecops:
     name: Synopsys DevSecOps
     runs-on: self-hosted
-#     permissions:
-#       actions: read
-#       contents: read
-#       security-events: write
     
     steps:
     - name: Checkout Project Repository
@@ -39,8 +38,16 @@ jobs:
         path: .synopsys
         token: ${{ secrets.SCM_TOKEN }}
 
+    - name: Establish Inputs
+      shell: pwsh
+      run: |
+        $ProjectName = ("${{ inputs.project-name }}" -eq ".") ? "${{ github.repository_owner }}/${{ github.event.repository.name }}" : "${{ inputs.project-name }}"
+        $BranchName = ("${{ inputs.branch-name }}" -eq ".") ? "${{ github.ref_name }}" : "${{ inputs.branch-name }}"
+        
+        Add-Content $GITHUB_ENV "ProjectName=$ProjectName"
+        Add-Content $GITHUB_ENV "BranchName=$BranchName"
+
     - name: Synopsys DevSecOps
-      id: synopsys
       run: |
         pwsh .synopsys/DevSecOps.ps1 \
           -IOURL ${{ secrets.IO_URL }} \
@@ -51,8 +58,8 @@ jobs:
           -CodeDxToken ${{ secrets.CODEDX_TOKEN }} \
           -RepositoryOwner ${{ github.repository_owner }} \
           -RepositoryName ${{ github.event.repository.name }} \
-          -ProjectName $ProjectName \
-          -BranchName ${{ github.ref_name }} \
+          -ProjectName ${{ env.ProjectName }} \
+          -BranchName ${{ env.BranchName }} \
           -GitHubUserName ${{ github.actor }} \
           -GitHubAccessToken ${{ secrets.SCM_TOKEN }} \
           -VerboseOption ${{ inputs.verbose-option }}
