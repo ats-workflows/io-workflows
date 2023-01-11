@@ -2,7 +2,15 @@ name: Synopsys DevSecOps
 
 on:
   workflow_call:
-     inputs:
+    inputs:
+      project-name:
+        default: '.'
+        required: false
+        type: string
+      branch-name:
+        default: '.'
+        required: false
+        type: string
       verbose-option:
         default: 'SilentlyContinue' # Options: 'Continue' (debug logging enabled) or 'SilentlyContinue' (debug logging disabled)
         required: false
@@ -33,7 +41,12 @@ jobs:
 
     - name: Synopsys DevSecOps
       id: synopsys
+      shell: pwsh
       run: |
+        $ProjectName = (${{ inputs.project-name }} -eq ".") ? "${{ github.repository_owner }}/${{ github.event.repository.name }" : "${{ inputs.project-name }}"
+        $BranchName = (${{ inputs.branch-name }} -eq ".") ? "${{ github.ref_name }}" : "${{ inputs.branch-name }}"
+        Write-Host $ProjectName
+        Write-Host $BranchName
         pwsh .synopsys/DevSecOps.ps1 \
           -IOURL ${{ secrets.IO_URL }} \
           -IOToken ${{ secrets.IO_TOKEN }} \
@@ -43,6 +56,7 @@ jobs:
           -CodeDxToken ${{ secrets.CODEDX_TOKEN }} \
           -RepositoryOwner ${{ github.repository_owner }} \
           -RepositoryName ${{ github.event.repository.name }} \
+          -ProjectName $ProjectName \
           -BranchName ${{ github.ref_name }} \
           -GitHubUserName ${{ github.actor }} \
           -GitHubAccessToken ${{ secrets.SCM_TOKEN }} \
