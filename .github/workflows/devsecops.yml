@@ -25,11 +25,13 @@ jobs:
     runs-on: self-hosted
     
     steps:
+    # Checkout the project repository
     - name: Checkout Project Repository
       uses: actions/checkout@v3
       with: # Polaris PRs, Warning: [hxghq51d] HEAD is detached for this repo, using heuristics to find Git branch (branches show as /pull/1/merge where number is the PR number).
         fetch-depth: 2
-      
+
+    # Checkout the DevSecOps workflow repository
     - name: Checkout Synopsys Workflow
       uses: actions/checkout@v3
       with:
@@ -38,6 +40,7 @@ jobs:
         path: .synopsys
         token: ${{ secrets.SCM_TOKEN }}
 
+    # Set input variables to the environment for use by the DevSecOps script
     - name: Establish Inputs
       shell: pwsh
       run: |
@@ -47,6 +50,7 @@ jobs:
         echo "PROJECT_NAME=$ProjectName" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
         echo "BRANCH_NAME=$BranchName" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
+    # Run the DevSecOps workflow
     - name: Synopsys DevSecOps
       run: |
         pwsh .synopsys/DevSecOps.ps1 \
@@ -59,7 +63,7 @@ jobs:
           -RepositoryOwner ${{ github.repository_owner }} \
           -RepositoryName ${{ github.event.repository.name }} \
           -ProjectName $PROJECT_NAME \
-          -BranchName ${{ env.BranchName }} \
+          -BranchName $BRANCH_NAME \
           -GitHubUserName ${{ github.actor }} \
           -GitHubAccessToken ${{ secrets.SCM_TOKEN }} \
           -VerboseOption ${{ inputs.verbose-option }}
