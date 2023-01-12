@@ -114,15 +114,7 @@ if (-Not (Test-Path -Path "$IOStateJSON" -PathType Leaf)) {
 } else {
   $PrescriptionJSON = Get-Content 'io_state.json' | Out-String | ConvertFrom-Json -AsHashTable
   $RunId = $PrescriptionJSON.data.io.run.id
-  $RunResponse = IO_OrchestrationRunDetails $IOURL $IOToken $RunId
-  $SecurityActivities = $($RunResponse.preScan.prescription.activities)
-  if ($SecurityActivities.Count -eq 0) {
-    Write-Host "No security activities prescribed for this run. Id: $RunId"
-  } else {
-    ForEach ($Activity in $SecurityActivities) {
-      Write-Host "Prescribed Security Activity: $($Activity.activity.longName) - Explanation: $($Activity.explanation)"
-    }
-  }
+  IO_PrintPrescriptionExplanation = IO_OrchestrationRunDetails $IOURL $IOToken $RunId
 }
 #---------------------------------------------------------------------------------------------------
 
