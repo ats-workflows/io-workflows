@@ -244,9 +244,8 @@ Function IO_PrintPrescriptionExplanation() {
     $PrescriptionTable = @()
     ForEach ($SecurityActivity in $SecurityActivities) {
       $ActivityLongName = $($SecurityActivity.activity.longName)
-      $ActivityExplanation = $($SecurityActivity.trigger)
-      $ActivityType = $($SecurityActivity.activity.manual)
-      $PrescriptionTable += [PSCustomObject]@{Activity="$ActivityLongName";Explanation="$ActivityExplanation";Manual="$ActivityType"}
+      $ActivityExplanation = $($SecurityActivity.explanation)
+      $PrescriptionTable += [PSCustomObject]@{Activity="$ActivityLongName";Explanation="$ActivityExplanation"}
     }
     Write-Host "Prescribed Security Activities:"
     $PrescriptionTable
