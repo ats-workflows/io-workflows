@@ -226,3 +226,29 @@ Function IO_OrchestrationRunDetails() {
 
   return $RunResponse
 }
+
+<#
+## Print the security activity prescription explanation
+## Requires: IO Server URL, Access Token
+## Returns: N/A
+#>
+Function IO_PrintPrescriptionExplanation() {
+  Param($IOURL, $IOToken, $RunId)
+
+  $RunResponse = IO_OrchestrationRunDetails $IOURL $IOToken $RunId
+  
+  $SecurityActivities = $($RunResponse.preScan.prescription.activities)
+  if ($SecurityActivities.Count -eq 0) {
+    Write-Host "No security activities prescribed for this run. Id: $RunId"
+  } else {
+    $PrescriptionTable = @()
+    ForEach ($Activity in $SecurityActivities) {
+      Write-Host "Prescribed Security Activity: $($Activity.activity.longName) - Explanation: $($Activity.explanation)"
+      $activity = $($Activity.activity.longName)
+      $explanation = $($Activity.explanation)
+      $manual = $($Activity.activity.manual)
+      $PrescriptionTable += [PSCustomObject]@{Activity=$activity;Explanation=$explanation;Manual=$manual}
+    }
+    $PrescriptionTable
+  }
+}
