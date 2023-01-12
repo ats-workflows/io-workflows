@@ -247,7 +247,7 @@ Function IO_PrintPrescriptionExplanation() {
       $activity = $($Activity.activity.longName)
       $explanation = $($Activity.explanation)
       $manual = $($Activity.activity.manual)
-      $PrescriptionTable += [PSCustomObject]@{Activity=$activity;Explanation=$explanation;Manual=$manual}
+      $PrescriptionTable += [PSCustomObject]@{Activity="$activity";Explanation="$explanation";Manual="$manual"}
     }
     $PrescriptionTable
   }
