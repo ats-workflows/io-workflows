@@ -242,13 +242,13 @@ Function IO_PrintPrescriptionExplanation() {
     Write-Host "No security activities prescribed for this run. Id: $RunId"
   } else {
     $PrescriptionTable = @()
-    ForEach ($Activity in $SecurityActivities) {
-      Write-Host "Prescribed Security Activity: $($Activity.activity.longName) - Explanation: $($Activity.explanation)"
-      $activity = $($Activity.activity.longName)
-      $explanation = $($Activity.explanation)
-      $manual = $($Activity.activity.manual)
-      $PrescriptionTable += [PSCustomObject]@{Activity="$activity";Explanation="$explanation";Manual="$manual"}
+    ForEach ($SecurityActivity in $SecurityActivities) {
+      $ActivityLongName = $($SecurityActivity.activity.longName)
+      $ActivityExplanation = $($SecurityActivity.activity.id)
+      $ActivityType = $($SecurityActivity.activity.longName)
+      $PrescriptionTable += [PSCustomObject]@{Activity="$ActivityLongName";Explanation="$ActivityExplanation";Manual="$ActivityType"}
     }
+    Write-Host "Prescribed Security Activities:"
     $PrescriptionTable
   }
 }
