@@ -247,7 +247,9 @@ Function IO_PrintPrescriptionExplanation() {
       $ActivityExplanation = $($SecurityActivity.explanation)
       $PrescriptionTable += [PSCustomObject]@{Activity="$ActivityLongName";Explanation="$ActivityExplanation"}
     }
+    Write-Host "=========="
     Write-Host "Prescribed Security Activities:"
     $PrescriptionTable
+    Write-Host "=========="
   }
 }
