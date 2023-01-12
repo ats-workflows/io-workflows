@@ -71,4 +71,5 @@ jobs:
           -ProjectName $PROJECT_NAME \
           -BranchName $BRANCH_NAME \
           -ProjectLanguage ${{ inputs.project-language }} \
+          -OS ${{ runner.os }} \
           -VerboseOption ${{ inputs.verbose-option }}
