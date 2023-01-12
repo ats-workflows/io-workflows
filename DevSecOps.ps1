@@ -114,7 +114,7 @@ if (-Not (Test-Path -Path "$IOStateJSON" -PathType Leaf)) {
 } else {
   $PrescriptionJSON = Get-Content 'io_state.json' | Out-String | ConvertFrom-Json -AsHashTable
   $RunId = $PrescriptionJSON.data.io.run.id
-  IO_PrintPrescriptionExplanation = IO_OrchestrationRunDetails $IOURL $IOToken $RunId
+  IO_PrintPrescriptionExplanation $IOURL $IOToken $RunId
 }
 #---------------------------------------------------------------------------------------------------
 
