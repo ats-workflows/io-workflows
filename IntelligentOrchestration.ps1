@@ -209,3 +209,20 @@ Function IO_CreateProject() {
 
   return $ProjectResponse
 }
+
+<#
+## Get the details of an orchestration run
+## Requires: IO Server URL, Access Token
+## Returns: Orchestration Run API Response
+#>
+Function IO_OrchestrationRunDetails() {
+  Param($IOURL, $IOToken, $RunId)
+
+  $Headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+  $Headers.Add("Accept", "*/*")
+  $Headers.Add("Authorization", "Bearer $IOToken")
+
+  $RunResponse = Invoke-RestMethod "$IOURL/api/ioiq/api/orchestration/runs/$RunId" -Method 'GET' -Headers $Headers
+
+  return $RunResponse
+}
