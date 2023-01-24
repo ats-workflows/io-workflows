@@ -39,7 +39,7 @@ jobs:
     - name: Checkout Synopsys Workflow
       uses: actions/checkout@v3
       with:
-        repository: io-onboard/synopsys-workflows
+        repository: io-workflows/io-workflows
         ref: main
         path: .synopsys
         token: ${{ secrets.SCM_TOKEN }}
