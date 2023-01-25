@@ -160,8 +160,8 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
   Write-Host "=========="
   Invoke-Expression $IO_StageExecution_Polaris
   
-  # Validate Polaris onboarding
-  Polaris_VerifyOnboarding $IOLog $ProjectLanguage
+  # Validate Polaris automation
+  Polaris_Validate $IOLog $ProjectLanguage
  }
 #---------------------------------------------------------------------------------------------------
 
