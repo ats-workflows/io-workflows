@@ -230,12 +230,30 @@ Function IO_OrchestrationRunDetails() {
 <#
 ## Print the security activity prescription explanation
 ## Requires: IO Server URL, Access Token
-## Returns: N/A
+## Returns: Array (potentially empty) of prescribed activities (activity short-names, like: sast, dast, sca, etc.)
 #>
 Function IO_PrintPrescriptionExplanation() {
   Param($IOURL, $IOToken, $RunId)
 
+  $PrescribedActivities = @()
   $RunResponse = IO_OrchestrationRunDetails $IOURL $IOToken $RunId
+  
+  Write-Host "=========="
+  Write-Host "Risk scorecard for $($RunResponse.info.projectName), run on: $($RunResponse.info.runDate), Id: $($RunResponse.id)"
+  Write-Host "Total Risk Score: $($RunResponse.risk.riskCard.riskScore)"
+  Write-Host "Risk Level: $($RunResponse.risk.riskCard.riskLevel)"
+  Write-Host "Risk score breakdown:"
+  Write-Host "Static Risk Score (Business Criticality): $($RunResponse.risk.riskCard.businessCriticalityScore) - Rating: $($RunResponse.risk.profile.businessCriticality)"
+  Write-Host "Static Risk Score (Accessibility): $($RunResponse.risk.riskCard.accessibilityScore) - Rating: $($RunResponse.risk.profile.accessibility)"
+  Write-Host "Static Risk Score (Data Classification): $($RunResponse.risk.riskCard.dataClassScore) - Rating: $($RunResponse.risk.profile.dataClassification)"
+  Write-Host "Dynamic Risk Score (Open Vulnerability): $($RunResponse.risk.riskCard.openVulnScore) - Rating: $($RunResponse.risk.profile.openVuln)"
+  Write-Host "Dynamic Risk Score (Code Change Significance): $($RunResponse.risk.riskCard.codeChangeScore) - Rating: $($RunResponse.risk.profile.codeChange)"
+  Write-Host "Code Change Summary: $($RunResponse.risk.codeChangeSummary.commitUrl)"
+  Write-Host "=========="
+  Write-Host "Risk Profile Policy: $($RunResponse.risk.policy.name)"
+  Write-Host "Pre-Scan Policy: $($RunResponse.preScan.policy.name)"
+  Write-Host "Post-Scan Policy: $($RunResponse.postScan.policy.name)"
+  Write-Host "=========="
   
   $SecurityActivities = $($RunResponse.preScan.prescription.activities)
   if ($SecurityActivities.Count -eq 0) {
@@ -246,10 +264,13 @@ Function IO_PrintPrescriptionExplanation() {
       $ActivityLongName = $($SecurityActivity.activity.longName)
       $ActivityExplanation = $($SecurityActivity.explanation)
       $PrescriptionTable += [PSCustomObject]@{Activity="$ActivityLongName";Explanation="$ActivityExplanation"}
+      $PrescribedActivities += $($SecurityActivity.type)
     }
     Write-Host "=========="
     Write-Host "Prescribed Security Activities:"
     $PrescriptionTable
     Write-Host "=========="
   }
+  
+  return $PrescribedActivities
 }
