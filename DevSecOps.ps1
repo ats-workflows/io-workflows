@@ -31,6 +31,7 @@ $OriginalPath = Get-Location
 # IO Parameters
 $IOWorkflowEngineVersion = "2022.7.1"
 $IOStateJSON = "io_state.json"
+$IOLog = "io.log"
 $IOError = "false"
 $IOBaseCommand_Linux = "/home/io "
 $IOBaseCommand_Windows = "io.exe "
@@ -84,7 +85,7 @@ Write-Host "=========="
 ## Intelligent Orchestration - Onboarding
 #>
 $IOProject = IO_QueryProjectsByName $IOURL $IOToken $ProjectName
-if ($IOProject -eq $null){
+if ($null -eq $IOProject){
   Write-Host "No project exists by name: $ProjectName"
   $IOProject = IO_CreateProject $IOURL $IOToken $ProjectName $ProjectLanguage
   Write-Host "Created project by name: $ProjectName with the default properties and policies - a manual edit of the project's configuration is required."
@@ -160,8 +161,10 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
   Invoke-Expression $IO_StageExecution_Polaris
   
   # Validate Polaris onboarding
-  $EmittedContentArray = Get-Content io.log | Select-String -Pattern "Emitted"
+  Write-Host "=========="
+  $EmittedContentArray = Get-Content $IOLog | Select-String -Pattern "Emitted"
   $EmittedLanguages = @()
+  $PolarisOnboardingFailure = false
   ForEach($EmittedContent in $EmittedContentArray) {
     Write-Host "$EmittedContent"
     
@@ -174,19 +177,34 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
     $CompilationIndex -= 1
     
     $EmittedLanguage = $ContentArray[$EmittedIndex..$CompilationIndex] | Out-String
-#     $EmittedLanguage = $EmittedLanguage.Replace("`r`n", " ")
     $EmittedLanguage = $EmittedLanguage.Replace("`r", "")
     $EmittedLanguage = $EmittedLanguage.Replace("`n", " ")
-
     $EmittedLanguages += $EmittedLanguage
+
     $EmissionPercentage = $ContentArray[$ContentArray.Length-2] | Out-String
-#     $EmissionPercentage = $EmissionPercentage.Replace("`r`n", "")
     $EmissionPercentage = $EmissionPercentage.Replace("`n", "")
     
-    Write-Host "Language - $EmittedLanguage - Emitted: $EmissionPercentage"
+    if ($EmissionPercentage -contains "100") { 
+      Write-Host "Language - $EmittedLanguage - Emitted: $EmissionPercentage"
+    } else {
+      Write-Error "Language - $EmittedLanguage - did not emit 100% ( $EmissionPercentage )"
+      $PolarisOnboardingFailure = true
+    }
   }
   
-  $EmittedLanguages
+  $ProjectLanguageArray = $ProjectLanguage.Split(",")
+  ForEach($ProjLang in $ProjectLanguageArray) {
+    if (-Not ($ProjLang -in $EmittedLanguages)) {
+      Write-Error "Language - $ProjLang not detected by Polaris."
+      $PolarisOnboardingFailure = true
+    }
+  }
+  
+  if ($PolarisOnboardingFailure) {
+    Write-Error "Polaris onboarding failure"
+    Exit 1
+  }
+  
  }
 #---------------------------------------------------------------------------------------------------
 
