@@ -203,8 +203,10 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sca") {
 <#
 ## Cleanup
 #>
+Write-Host "=========="
 if (Test-Path -Path "$IOStateJSON" -PathType Leaf) {
   Write-Host "Removing $IOStateJSON"
   Remove-Item -Path "$IOStateJSON"
 }
+Write-Host "=========="
 #------------------------------------------------------------------------------------------------FIN
