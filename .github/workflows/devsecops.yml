@@ -55,7 +55,7 @@ jobs:
       run: |
         $ProjectName = ("${{ inputs.project-name }}" -eq ".") ? "${{ github.repository_owner }}/${{ github.event.repository.name }}" : "${{ inputs.project-name }}"
         $BranchName = ("${{ inputs.branch-name }}" -eq ".") ? "${{ github.ref_name }}" : "${{ inputs.branch-name }}"
-        $ProjectVersion = ("${{ project-version }}" -eq ".") ? "${{ github.ref_name }}" : "${{ inputs.project-version }}"
+        $ProjectVersion = ("${{ inputs.project-version }}" -eq ".") ? "${{ github.ref_name }}" : "${{ inputs.project-version }}"
         
         echo "PROJECT_NAME=$ProjectName" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
         echo "BRANCH_NAME=$BranchName" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
