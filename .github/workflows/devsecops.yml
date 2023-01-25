@@ -8,6 +8,11 @@ on:
         required: false
         type: string
         description: "Workflow will assume the calling repository's name unless this parameter is overridden with the target project-name to use."
+      project-version:
+        default: '.'
+        required: false
+        type: string
+        description: "Workflow will assume the calling repository's branch unless this parameter is overridden with the target project-version to use."
       branch-name:
         default: '.'
         required: false
@@ -50,9 +55,11 @@ jobs:
       run: |
         $ProjectName = ("${{ inputs.project-name }}" -eq ".") ? "${{ github.repository_owner }}/${{ github.event.repository.name }}" : "${{ inputs.project-name }}"
         $BranchName = ("${{ inputs.branch-name }}" -eq ".") ? "${{ github.ref_name }}" : "${{ inputs.branch-name }}"
+        $ProjectVersion = ("${{ project-version }}" -eq ".") ? "${{ github.ref_name }}" : "${{ inputs.project-version }}"
         
         echo "PROJECT_NAME=$ProjectName" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
         echo "BRANCH_NAME=$BranchName" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+        echo "PROJECT_VERSION=$ProjectVersion" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
     # Run the DevSecOps workflow
     - name: Synopsys DevSecOps
@@ -62,6 +69,8 @@ jobs:
           -IOToken ${{ secrets.IO_TOKEN }} \
           -PolarisURL ${{ secrets.POLARIS_URL }} \
           -PolarisToken ${{ secrets.POLARIS_TOKEN }} \
+          -BlackDuckURL ${{ secrets.BLACK_DUCK_URL }} \
+          -BlackDuckToken ${{ secrets.BLACK_DUCK_TOKEN }} \
           -CodeDxURL ${{ secrets.CODEDX_URL }} \
           -CodeDxToken ${{ secrets.CODEDX_TOKEN }} \
           -GitHubUserName ${{ github.actor }} \
@@ -69,6 +78,7 @@ jobs:
           -RepositoryOwner ${{ github.repository_owner }} \
           -RepositoryName ${{ github.event.repository.name }} \
           -ProjectName $PROJECT_NAME \
+          -ProjectVersion $PROJECT_VERSION \
           -BranchName $BRANCH_NAME \
           -ProjectLanguage ${{ inputs.project-language }} \
           -OS ${{ runner.os }} \
