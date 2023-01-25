@@ -161,52 +161,7 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
   Invoke-Expression $IO_StageExecution_Polaris
   
   # Validate Polaris onboarding
-  Write-Host "=========="
-  $EmittedContentArray = Get-Content $IOLog | Select-String -Pattern "Emitted"
-  $EmittedLanguages = @()
-  $PolarisOnboardingFailure = false
-  ForEach($EmittedContent in $EmittedContentArray) {
-    $ContentArray = -Split $EmittedContent
-    
-    $EmittedIndex = $ContentArray.IndexOf('Emitted')
-    $CompilationIndex = $ContentArray.IndexOf('compilation')
-    
-    $EmittedIndex += 2
-    $CompilationIndex -= 1
-    
-    $EmittedLanguage = $ContentArray[$EmittedIndex..$CompilationIndex] | Out-String
-    $EmittedLanguage = $EmittedLanguage.Replace("`r", "")
-    $EmittedLanguage = $EmittedLanguage.Replace("`n", " ")
-    $EmittedLanguage = $EmittedLanguage.Trim()
-    $EmittedLanguages += $EmittedLanguage
-
-    $EmissionPercentage = $ContentArray[$ContentArray.Length-2] | Out-String
-    $EmissionPercentage = $EmissionPercentage.Replace("`n", "")
-    $EmissionPercentage = $EmissionPercentage.Trim()
-    
-    if ($EmissionPercentage -Like "*100*") { 
-      Write-Host "Language - $EmittedLanguage - Emitted: $EmissionPercentage"
-    } else {
-      Write-Error "Language - $EmittedLanguage - did not emit 100% ( $EmissionPercentage )"
-      $PolarisOnboardingFailure = $true
-    }
-  }
-  
-  $ProjectLanguageArray = $ProjectLanguage.Split(",")
-  ForEach($ProjLang in $ProjectLanguageArray) {
-    if ($EmittedLanguages -NotContains $ProjLang.Trim()) {
-      Write-Error "Language - $ProjLang not detected by Polaris."
-      $PolarisOnboardingFailure = $true
-    }
-  }
-  
-  if ($PolarisOnboardingFailure) {
-    Write-Error "Polaris onboarding failure"
-    Exit 1
-  } else {
-    Write-Host "Polaris onboaring successful"
-  }
-  
+  Polaris_VerifyOnboarding $IOLog $ProjectLanguage
  }
 #---------------------------------------------------------------------------------------------------
 
