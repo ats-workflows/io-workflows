@@ -139,33 +139,33 @@ if (-Not (Test-Path -Path "$IOStateJSON" -PathType Leaf)) {
 <#
 ## Intelligent Orchestration - Execution - SAST
 #>
-# if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
-#   Write-Host "Running SAST by prescription..."
-#   # Write-Host "Last SAST run (scan) date: $($PrescriptionJSON.data.prescription.security.activities.sast.lastScanDate)"
+if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
+  Write-Host "Running SAST by prescription..."
+  # Write-Host "Last SAST run (scan) date: $($PrescriptionJSON.data.prescription.security.activities.sast.lastScanDate)"
   
-#   # Set the right base command based on platform
-#   $IO_StageExecution_Polaris = ""
-#   $StageExecution_Options = "--stage execution --state $IOStateJSON "
-#   $StageExecution_Polaris = "polaris.instanceurl='$PolarisURL' polaris.authtoken='$PolarisToken' polaris.BranchName='$BranchName' polaris.projectname='$ProjectName'"
+  # Set the right base command based on platform
+  $IO_StageExecution_Polaris = ""
+  $StageExecution_Options = "--stage execution --state $IOStateJSON "
+  $StageExecution_Polaris = "polaris.instanceurl='$PolarisURL' polaris.authtoken='$PolarisToken' polaris.BranchName='$BranchName' polaris.projectname='$ProjectName'"
 
-#   if ($OS -like "*Linux*") {
-#     $IO_StageExecution_Polaris = $IOBaseCommand_Linux + $StageExecution_Options + $StageExecution_Polaris
-#   } elseif ($OS -like "*Windows*") {
-#     $IO_StageExecution_Polaris = $IOBaseCommand_Windows + $StageExecution_Options + $StageExecution_Polaris
-#   } elseif ($OS -like "*macOS*") {
-#     $IO_StageExecution_Polaris = $IOBaseCommand_macOS + $StageExecution_Options + $StageExecution_Polaris
-#   } else {
-#     Write-Error "Unsupported OS/Architecture ( $OS )."
-#   }
+  if ($OS -like "*Linux*") {
+    $IO_StageExecution_Polaris = $IOBaseCommand_Linux + $StageExecution_Options + $StageExecution_Polaris
+  } elseif ($OS -like "*Windows*") {
+    $IO_StageExecution_Polaris = $IOBaseCommand_Windows + $StageExecution_Options + $StageExecution_Polaris
+  } elseif ($OS -like "*macOS*") {
+    $IO_StageExecution_Polaris = $IOBaseCommand_macOS + $StageExecution_Options + $StageExecution_Polaris
+  } else {
+    Write-Error "Unsupported OS/Architecture ( $OS )."
+  }
   
-#   Write-Host "=========="
-#   Write-Host "IO - Stage Execution - Polaris"
-#   Write-Host "=========="
-#   Invoke-Expression $IO_StageExecution_Polaris
+  Write-Host "=========="
+  Write-Host "IO - Stage Execution - Polaris"
+  Write-Host "=========="
+  Invoke-Expression $IO_StageExecution_Polaris
   
-#   # Validate Polaris automation
-#   Polaris_Validate $IOLog $ProjectLanguage
-#  }
+  # Validate Polaris automation
+  Polaris_Validate $IOLog $ProjectLanguage
+ }
 #---------------------------------------------------------------------------------------------------
 
 <#
