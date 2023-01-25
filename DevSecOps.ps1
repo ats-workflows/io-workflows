@@ -173,23 +173,20 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
     $EmittedIndex += 2
     $CompilationIndex -= 1
     
-    #$EmittedLanguageArr = $($ContentArray[$EmittedIndex..$CompilationIndex]) | Out-String
-    #$EmittedLanguage = $EmittedLanguageArr.Replace("`r`n"," ")
-    
     $EmittedLanguage = $ContentArray[$EmittedIndex..$CompilationIndex] | Out-String
-    $EmittedLanguage = $EmittedLanguage.Replace("`r`n", " ")
-    $EmittedLanguage = $EmittedLanguage.Replace("`r", " ")
-    $EmittedLanguage = $EmittedLanguage.Replace("`n", "")
-    #$EmittedLanguage = [string]::join("",($EmittedLanguage.Split("`n")))
+#     $EmittedLanguage = $EmittedLanguage.Replace("`r`n", " ")
+    $EmittedLanguage = $EmittedLanguage.Replace("`r", "")
+    $EmittedLanguage = $EmittedLanguage.Replace("`n", " ")
+
     $EmittedLanguages += $EmittedLanguage
     $EmissionPercentage = $ContentArray[$ContentArray.Length-2] | Out-String
-    $EmissionPercentage = $EmissionPercentage.Replace("`r`n", "")
+#     $EmissionPercentage = $EmissionPercentage.Replace("`r`n", "")
     $EmissionPercentage = $EmissionPercentage.Replace("`n", "")
     
     Write-Host "Language - $EmittedLanguage - Emitted: $EmissionPercentage"
   }
   
-  Write-Host "$EmittedLanguages"
+  $EmittedLanguages
  }
 #---------------------------------------------------------------------------------------------------
 
