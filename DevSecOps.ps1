@@ -24,6 +24,8 @@ Param(
 $VerbosePreference = $VerboseOption
 Get-Date -DisplayHint Date
 Write-Host "Initial directory: $PWD"
+# Print current directory contents (including hidden files and folders)
+#Get-ChildItem -Path $PWD -Force | Select-Object Size, Name
 $OriginalPath = Get-Location
 
 # IO Parameters
@@ -36,11 +38,22 @@ $IOBaseCommand_macOS = "./io "
 #---------------------------------------------------------------------------------------------------
 
 <#
-## Source (include) scripts with helper functions
+## Import (include) modules (scripts with helper functions)
 #>
-. "$PWD/.synopsys/IntelligentOrchestration.ps1"
-. "$PWD/.synopsys/Polaris.ps1"
-. "$PWD/.synopsys/CodeDx.ps1"
+if ($OS -like "*Windows*") {
+  Set-ExecutionPolicy -ExecutionPolicy Unrestricted
+  $IOModule = Join-Path $PWD 'Modules' 'IntelligentOrchestration.psm1'
+  $CodeDxModule = Join-Path $PWD 'Modules' 'CodeDx.psm1'
+  $PolarisModule = Join-Path $PWD 'Modules' 'Polaris.psm1'
+} else {
+  $IOModule = Join-Path $PWD '.synopsys' 'Modules' 'IntelligentOrchestration.psm1'
+  $CodeDxModule = Join-Path $PWD '.synopsys' 'Modules' 'CodeDx.psm1'
+  $PolarisModule = Join-Path $PWD '.synopsys' 'Modules' 'Polaris.psm1'
+}
+
+Import-Module -Name $IOModule
+Import-Module -Name $CodeDxModule
+Import-Module -Name $PolarisModule
 #---------------------------------------------------------------------------------------------------
 
 # Authenticate with Polaris (Use access token to get JWT - required for subsequent Polaris API calls)
@@ -106,13 +119,13 @@ if ($OS -like "*Linux*") {
 Write-Host "=========="
 Write-Host "IO - Stage IO (Prescription)"
 Write-Host "=========="
-Invoke-Expression $IO_StageIO
+Invoke-Expression $IO_StageIO | Out-Null
 
 # Running stage IO should result in a state/prescription JSON
 if (-Not (Test-Path -Path "$IOStateJSON" -PathType Leaf)) {
   $IOError = "true"
 } else {
-  $PrescriptionJSON = Get-Content 'io_state.json' | Out-String | ConvertFrom-Json -AsHashTable
+  $PrescriptionJSON = Get-Content "$IOStateJSON" | Out-String | ConvertFrom-Json -AsHashTable
   $RunId = $PrescriptionJSON.data.io.run.id
   IO_PrintPrescriptionExplanation $IOURL $IOToken $RunId
 }
@@ -145,4 +158,13 @@ if ($IOError -eq "true" -Or $PrescriptionJSON.data.prescription.security.activit
   Write-Host "=========="
   Invoke-Expression $IO_StageExecution_Polaris
  }
- #---------------------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------
+
+<#
+## Cleanup
+#>
+if (Test-Path -Path "$IOStateJSON" -PathType Leaf) {
+  Write-Host "Removing $IOStateJSON"
+  Remove-Item -Path "$IOStateJSON"
+}
+#------------------------------------------------------------------------------------------------FIN
