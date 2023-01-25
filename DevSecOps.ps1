@@ -34,6 +34,7 @@ $OriginalPath = Get-Location
 # IO Parameters
 $IOWorkflowEngineVersion = "2022.7.1"
 $IOStateJSON = "io_state.json"
+$WFJSON = "wf-output.json"
 $IOLog = "io.log"
 $IOError = "false"
 $IOBaseCommand_Linux = "/home/io "
@@ -221,6 +222,12 @@ Write-Host "=========="
 Write-Host "IO - Stage Workflow"
 Write-Host "=========="
 Invoke-Expression $IO_StageWorkflow
+
+if (Test-Path -Path "$WFJSON" -PathType Leaf) {
+  Get-Content -Raw $WFJSON | ConvertFrom-Json -AsHashTable | ConvertTo-Json
+} else {
+  Write-Host "No Workflow Output"
+}
 #---------------------------------------------------------------------------------------------------
 
 <#
