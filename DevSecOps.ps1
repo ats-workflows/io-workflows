@@ -201,6 +201,29 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sca") {
 #---------------------------------------------------------------------------------------------------
 
 <#
+## Intelligent Orchestration - Workflow (Post-Scan)
+#>
+# Set the right base command based on platform
+$IO_StageWorkflow = ""
+$StageWorkflow_Options = "--stage workflow --state $IOStateJSON workflow.engine.version='2022.12.0'"
+
+if ($OS -like "*Linux*") {
+  $IO_StageWorkflow = $IOBaseCommand_Linux + $StageWorkflow_Options 
+} elseif ($OS -like "*Windows*") {
+  $IO_StageWorkflow = $IOBaseCommand_Windows + $StageWorkflow_Options
+} elseif ($OS -like "*macOS*") {
+  $IO_StageWorkflow = $IOBaseCommand_macOS + $StageWorkflow_Options
+} else {
+  Write-Error "Unsupported OS/Architecture ( $OS )."
+}
+  
+Write-Host "=========="
+Write-Host "IO - Stage Workflow"
+Write-Host "=========="
+Invoke-Expression $IO_StageWorkflow
+#---------------------------------------------------------------------------------------------------
+
+<#
 ## Cleanup
 #>
 Write-Host "=========="
