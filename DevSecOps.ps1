@@ -171,9 +171,14 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
     $EmittedIndex += 2
     $CompilationIndex -= 1
     
-    $EmittedLanguages += ($ContentArray[$EmittedIndex..$CompilationIndex] | Out-String).Replace("`r`n"," ")
+    $EmittedLanguage = ($ContentArray[$EmittedIndex..$CompilationIndex] | Out-String).Replace("`r`n"," ")
+    
+    $EmittedLanguages += $EmittedLanguage
     $EmissionPercentage = $ContentArray[$ContentArray.Length-2]
     
+    Write-Host "$EmittedLanguage"
+    Write-Host "$EmittedIndex - $CompilationIndex"
+    Write-Host "$($ContentArray[$EmittedIndex..$CompilationIndex])"
     Write-Host "$EmissionPercentage"
   }
   Write-Host "$EmittedLanguages"
