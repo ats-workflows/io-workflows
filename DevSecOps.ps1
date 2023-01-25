@@ -163,7 +163,8 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
   $EmittedContentArray = Get-Content io.log | Select-String -Pattern "Emitted"
   $EmittedLanguages = @()
   ForEach($EmittedContent in $EmittedContentArray) {
-    Write-Host "$$EmittedContent"
+    Write-Host "$EmittedContent"
+    
     $ContentArray = -Split $EmittedContent
     
     $EmittedIndex = $ContentArray.IndexOf('Emitted')
@@ -176,13 +177,16 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
     #$EmittedLanguage = $EmittedLanguageArr.Replace("`r`n"," ")
     
     $EmittedLanguage = $ContentArray[$EmittedIndex..$CompilationIndex] | Out-String
-    $EmittedLanguage = [string]::join("",($EmittedLanguage.Split("`n")))
+    $EmittedLanguage = $EmittedLanguageArr.Replace("`r"," ")
+    $EmittedLanguage = $EmittedLanguageArr.Replace("`n"," ")
+    #$EmittedLanguage = [string]::join("",($EmittedLanguage.Split("`n")))
     $EmittedLanguages += $EmittedLanguage
     $EmissionPercentage = $ContentArray[$ContentArray.Length-2] | Out-String
     
     Write-Host "Language - $EmittedLanguage - Emitted: $EmissionPercentage"
   }
-#   Write-Host "$EmittedLanguages"
+  
+  Write-Host "$EmittedLanguages"
  }
 #---------------------------------------------------------------------------------------------------
 
