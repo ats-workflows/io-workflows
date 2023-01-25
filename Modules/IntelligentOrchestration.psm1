@@ -293,15 +293,16 @@ Function IO_PrintPrescriptionExplanation() {
     Write-Host "No security activities prescribed for this run. Id: $RunId"
   } else {
     $PrescriptionTable = @()
+    Write-Host "Prescribed Security Activities:"
     ForEach ($SecurityActivity in $SecurityActivities) {
       $ActivityLongName = $($SecurityActivity.activity.longName)
       $ActivityExplanation = $($SecurityActivity.explanation)
       $PrescriptionTable += [PSCustomObject]@{Activity="$ActivityLongName";Explanation="$ActivityExplanation"}
       $PrescribedActivities += $($SecurityActivity.type).ToLower()
+      Write-Host "  Security Activity: $ActivityLongName"
+      Write-Host "  Activity Reasoning: $ActivityExplanation"
+      Write-Host "----------"
     }
-    Write-Host "=========="
-    Write-Host "Prescribed Security Activities:"
-    Write-Host $PrescriptionTable
     Write-Host "=========="
   }
   
