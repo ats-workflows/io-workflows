@@ -14,6 +14,7 @@ $ValidProjectLanguages.Add("SWIFT", @("OTHER", "NOT_SPECIFIED"))
 $ValidProjectLanguages.Add("PHP", @("OTHER", "NOT_SPECIFIED"))
 $ValidProjectLanguages.Add("PERL", @("OTHER", "NOT_SPECIFIED"))
 $ValidProjectLanguages.Add("OTHER", @("Other", "NOT_SPECIFIED"))
+#---------------------------------------------------------------------------------------------------
 
 <#
 ## Normalize IO URL (trim down to base URL & remove trailing slash; if applicable)
@@ -38,6 +39,7 @@ Function IO_NormalizeURL() {
 
   return $IOURL
 }
+#---------------------------------------------------------------------------------------------------
 
 <#
 ## Intelligent Orchestration Health Check
@@ -66,6 +68,7 @@ Function IO_HealthCheck() {
     Write-Error "Failed Intelligent Orchestration Health Check"
   }
 }
+#---------------------------------------------------------------------------------------------------
 
 <#
 ## Query IO for Project by Name
@@ -104,6 +107,7 @@ Function IO_QueryProjectsByName() {
   Write-Verbose "No projects exact-matched using $ProjectName as the project-name query."
   return $null
 }
+#---------------------------------------------------------------------------------------------------
 
 <#
 ## Get the Synopsys High Risk Profile Policy from Intelligent Orchestration
@@ -126,6 +130,7 @@ Function IO_GetHighRiskProfilePolicy() {
 
   return $($RiskProfilePolicyResponse._items[0].id)
 }
+#---------------------------------------------------------------------------------------------------
 
 <#
 ## Get the Synopsys Pre-Scan Policy from Intelligent Orchestration
@@ -148,6 +153,7 @@ Function IO_GetSynopsysPreScanPolicy() {
 
   return $($PreScanPolicyResponse._items[0].id)
 }
+#---------------------------------------------------------------------------------------------------
 
 <#
 ## Get the Synopsys Post-Scan Policy from Intelligent Orchestration
@@ -170,6 +176,7 @@ Function IO_GetSynopsysPostScanPolicy() {
 
   return $($PostScanPolicyResponse._items[0].id)
 }
+#---------------------------------------------------------------------------------------------------
 
 <#
 ## Create a project on IO
@@ -209,10 +216,11 @@ Function IO_CreateProject() {
 
   return $ProjectResponse
 }
+#---------------------------------------------------------------------------------------------------
 
 <#
 ## Get the details of an orchestration run
-## Requires: IO Server URL, Access Token
+## Requires: IO Server URL, Access Token, Run Id
 ## Returns: Orchestration Run API Response
 #>
 Function IO_OrchestrationRunDetails() {
@@ -226,6 +234,31 @@ Function IO_OrchestrationRunDetails() {
 
   return $RunResponse
 }
+#---------------------------------------------------------------------------------------------------
+
+<#
+## Get all security activities on IO
+## Requires: IO Server URL, Access Token
+## Returns: Array of security activities
+#>
+Function IO_SecurityActivities() {
+  Param($IOURL, $IOToken)
+
+  $SecurityActivities = @()
+  
+  $Headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+  $Headers.Add("Accept", "*/*")
+  $Headers.Add("Content-Type", "application/vnd.synopsys.io.activity-2+json")
+  $Headers.Add("Authorization", "Bearer $IOToken")
+
+  $ActivityResponse = Invoke-RestMethod "$IOURL/api/ioiq/api/configs/activities" -Method 'GET' -Headers $Headers
+  ForEach ($SecurityActivity in $($ActivityResponse._items)) {
+    $SecurityActivities += $($SecurityActivity.name).ToLower()
+  }
+
+  return $SecurityActivities
+}
+#---------------------------------------------------------------------------------------------------
 
 <#
 ## Print the security activity prescription explanation
@@ -264,7 +297,7 @@ Function IO_PrintPrescriptionExplanation() {
       $ActivityLongName = $($SecurityActivity.activity.longName)
       $ActivityExplanation = $($SecurityActivity.explanation)
       $PrescriptionTable += [PSCustomObject]@{Activity="$ActivityLongName";Explanation="$ActivityExplanation"}
-      $PrescribedActivities += $($SecurityActivity.type)
+      $PrescribedActivities += $($SecurityActivity.type).ToLower()
     }
     Write-Host "=========="
     Write-Host "Prescribed Security Activities:"
@@ -274,3 +307,4 @@ Function IO_PrintPrescriptionExplanation() {
   
   return $PrescribedActivities
 }
+#---------------------------------------------------------------------------------------------------
