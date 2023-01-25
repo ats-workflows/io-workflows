@@ -158,6 +158,25 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
   Write-Host "IO - Stage Execution - Polaris"
   Write-Host "=========="
   Invoke-Expression $IO_StageExecution_Polaris
+  
+  # Validate Polaris onboarding
+  $EmittedContentArray = Get-Content io.log | Select-String -Pattern "Emitted"
+  $EmittedLanguages = @()
+  ForEach($EmittedContent in $EmittedContentArray) {
+    $ContentArray = -Split $EmittedContent
+    
+    $EmittedIndex = $ContentArray.IndexOf('Emitted')
+    $CompilationIndex = $ContentArray.IndexOf('compilation')
+    
+    $EmittedIndex += 2
+    $CompilationIndex -= 1
+    
+    $EmittedLanguages += ($ContentArray[$EmittedIndex..$CompilationIndex] | Out-String).Replace("`r`n"," ")
+    $EmissionPercentage = $ContentArray[$ContentArray.Length-2]
+    
+    Write-Host "$EmissionPercentage"
+  }
+  Write-Host "$EmittedLanguages"
  }
 #---------------------------------------------------------------------------------------------------
 
