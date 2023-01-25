@@ -301,7 +301,7 @@ Function IO_PrintPrescriptionExplanation() {
     }
     Write-Host "=========="
     Write-Host "Prescribed Security Activities:"
-    $PrescriptionTable
+    Write-Host $PrescriptionTable
     Write-Host "=========="
   }
   
