@@ -167,7 +167,8 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
   $PolarisOnboardingFailure = false
   ForEach($EmittedContent in $EmittedContentArray) {
     Write-Host "$EmittedContent"
-    
+    $EmittedContent = $EmittedContent.replace('100', '99')
+    Write-Host "$EmittedContent"
     $ContentArray = -Split $EmittedContent
     
     $EmittedIndex = $ContentArray.IndexOf('Emitted')
@@ -196,7 +197,8 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
   $ProjectLanguageArray
   $EmittedLanguages
   ForEach($ProjLang in $ProjectLanguageArray) {
-    if (-Not ($EmittedLanguages -Contains $ProjLang)) {
+    Write-Host "$ProjLang"
+    if ($EmittedLanguages -NotContains $ProjLang) {
       Write-Error "Language - $ProjLang not detected by Polaris."
       $PolarisOnboardingFailure = true
     }
