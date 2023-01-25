@@ -167,7 +167,7 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
   $PolarisOnboardingFailure = false
   ForEach($EmittedContent in $EmittedContentArray) {
     Write-Host "$EmittedContent"
-    $EmittedContent = $EmittedContent.replace('100', '99')
+    $EmittedContent = ($EmittedContent | Out-String).replace('100', '99')
     Write-Host "$EmittedContent"
     $ContentArray = -Split $EmittedContent
     
@@ -180,10 +180,12 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
     $EmittedLanguage = $ContentArray[$EmittedIndex..$CompilationIndex] | Out-String
     $EmittedLanguage = $EmittedLanguage.Replace("`r", "")
     $EmittedLanguage = $EmittedLanguage.Replace("`n", " ")
+    $EmittedLanguage = $EmittedLanguage.Trim()
     $EmittedLanguages += $EmittedLanguage
 
     $EmissionPercentage = $ContentArray[$ContentArray.Length-2] | Out-String
     $EmissionPercentage = $EmissionPercentage.Replace("`n", "")
+    $EmissionPercentage = $EmissionPercentage.Trim()
     
     if ($EmissionPercentage -Like "*100*") { 
       Write-Host "Language - $EmittedLanguage - Emitted: $EmissionPercentage"
@@ -198,7 +200,7 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
   $EmittedLanguages
   ForEach($ProjLang in $ProjectLanguageArray) {
     Write-Host "$ProjLang"
-    if ($EmittedLanguages -NotContains $ProjLang) {
+    if ($EmittedLanguages -NotContains $ProjLang.Trim()) {
       Write-Error "Language - $ProjLang not detected by Polaris."
       $PolarisOnboardingFailure = true
     }
