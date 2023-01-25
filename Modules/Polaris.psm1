@@ -83,11 +83,17 @@ Function Polaris_GetProjectBranches() {
 ## Requires: Polaris scna logs (IO logs), Project Languages
 ## Returns: N/A
 #>
-Function Polaris_VerifyOnboarding() {
+Function Polaris_Validate() {
   Param($IOLog, $ProjectLanguage)
   
-  $PolarisOnboardingFailure = false
+  $IsNewOnboarding = $true
+  $ValidationFailure = $false
   $EmittedLanguages = @()
+  
+  $OnboardArray = Get-Content $IOLog | Select-String -Pattern "Project created in Portal"
+  if ($OnboardArray.Length -eq 0) {
+    $IsNewOnboarding = $false
+  }
   
   $EmittedContentArray = Get-Content $IOLog | Select-String -Pattern "Emitted"
   ForEach ($EmittedContent in $EmittedContentArray) {
@@ -113,7 +119,7 @@ Function Polaris_VerifyOnboarding() {
       Write-Host "Language - $EmittedLanguage - Emitted: $EmissionPercentage"
     } else {
       Write-Error "Language - $EmittedLanguage - did not emit 100% ( $EmissionPercentage )"
-      $PolarisOnboardingFailure = $true
+      $ValidationFailure = $true
     }
   }
   
@@ -121,14 +127,18 @@ Function Polaris_VerifyOnboarding() {
   ForEach($ProjLang in $ProjectLanguageArray) {
     if ($EmittedLanguages -NotContains $ProjLang.Trim()) {
       Write-Error "Language - $ProjLang not detected by Polaris."
-      $PolarisOnboardingFailure = $true
+      $ValidationFailure = $true
     }
   }
   
-  if ($PolarisOnboardingFailure) {
+  if ($ValidationFailure) {
     Write-Error "Polaris onboarding failure"
     Exit 1
+  } 
+  
+  if ($IsNewOnboarding) {
+    Write-Host "Polaris onboarding successful - scan validation complete."
   } else {
-    Write-Host "Polaris onboaring successful"
+    Write-Host "Polaris scan validation complete."
   }
 }
