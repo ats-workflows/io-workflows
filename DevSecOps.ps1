@@ -191,24 +191,24 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
       Write-Host "Language - $EmittedLanguage - Emitted: $EmissionPercentage"
     } else {
       Write-Error "Language - $EmittedLanguage - did not emit 100% ( $EmissionPercentage )"
-      $PolarisOnboardingFailure = true
+      $PolarisOnboardingFailure = $true
     }
   }
   
   $ProjectLanguageArray = $ProjectLanguage.Split(",")
-  $ProjectLanguageArray
-  $EmittedLanguages
   ForEach($ProjLang in $ProjectLanguageArray) {
     Write-Host "$ProjLang"
     if ($EmittedLanguages -NotContains $ProjLang.Trim()) {
       Write-Error "Language - $ProjLang not detected by Polaris."
-      $PolarisOnboardingFailure = true
+      $PolarisOnboardingFailure = $true
     }
   }
   
   if ($PolarisOnboardingFailure) {
     Write-Error "Polaris onboarding failure"
     Exit 1
+  } else {
+    Write-Host "Polaris onboaring successful"
   }
   
  }
