@@ -177,9 +177,6 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sca") {
   $LoadPath = Join-Path $PWD '.synopsys' 'Adapters' 'BlackDuckAdapter.json'
   $MovePath = Join-Path $PWD 'BlackDuckAdapter.json'
   Move-Item $LoadPath -Destination $MovePath
-  $LoadPath = Join-Path $PWD '.synopsys' 'Adapters' 'BlackDuck.sh'
-  $MovePath = Join-Path $PWD 'BlackDuck.sh'
-  Move-Item $LoadPath -Destination $MovePath
   
   # Set the right base command based on platform
   $IO_StageExecution_BlackDuck = ""
