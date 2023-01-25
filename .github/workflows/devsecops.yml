@@ -16,7 +16,7 @@ on:
       project-language:
         required: true
         type: string
-        description: "If the project hasn't already been onboarded, this parameter will be used in the onboarding process. Valid options: Java, JavaScript, C++, C#, Go, Ruby, Python, Swift, PHP, Perl, Other"
+        description: "Usage: IO - this parameter will be used in the onboarding process for new projects. Valid options: Java, JavaScript, C++, C#, Go, Ruby, Python, Swift, PHP, Perl, Other. Polaris: Multiple languages can be passed in - comma-separated to be used to verify SAST scans."
       verbose-option:
         default: "Continue"
         required: false
