@@ -174,10 +174,17 @@ if (-Not (Test-Path -Path "$IOStateJSON" -PathType Leaf)) {
 if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sca") {
   Write-Host "Running SCA by prescription..."
   
+  $LoadPath = Join-Path $PWD '.synopsys' 'Adapters' 'BlackDuckAdapter.json'
+  $MovePath = Join-Path $PWD 'BlackDuckAdapter.json'
+  Move-Item $LoadPath -Destination $MovePath
+  $LoadPath = Join-Path $PWD '.synopsys' 'Adapters' 'BlackDuck.sh'
+  $MovePath = Join-Path $PWD 'BlackDuck.sh'
+  Move-Item $LoadPath -Destination $MovePath
+  
   # Set the right base command based on platform
   $IO_StageExecution_BlackDuck = ""
   $StageExecution_Options = "--stage execution --state $IOStateJSON "
-  $StageExecution_BlackDuck = "blackduck.authtoken='$BlackDuckToken' blackduck.instanceurl='$BlackDuckURL' blackduck.projectname='$ProjectName' blackduck.projectversion='$ProjectVersion' --adapters .synopsys/Adapters/BlackDuckAdapter.json"
+  $StageExecution_BlackDuck = "blackduck.authtoken='$BlackDuckToken' blackduck.instanceurl='$BlackDuckURL' blackduck.projectname='$ProjectName' blackduck.projectversion='$ProjectVersion' --adapters BlackDuckAdapter.json"
 
   if ($OS -like "*Linux*") {
     $IO_StageExecution_BlackDuck = $IOBaseCommand_Linux + $StageExecution_Options + $StageExecution_BlackDuck
