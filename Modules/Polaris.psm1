@@ -139,6 +139,6 @@ Function Polaris_Validate() {
   if ($IsNewOnboarding) {
     Write-Host "Polaris onboarding successful - scan validation complete."
   } else {
-    Write-Host "Polaris scan validation complete."
+    Write-Host "Polaris project already onboarded - scan validation complete."
   }
 }
