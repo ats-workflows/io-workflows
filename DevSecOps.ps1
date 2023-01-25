@@ -137,7 +137,7 @@ if (-Not (Test-Path -Path "$IOStateJSON" -PathType Leaf)) {
 #>
 if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
   Write-Host "Running SAST by prescription..."
-  Write-Host "Last SAST run (scan) date: $($PrescriptionJSON.data.prescription.security.activities.sast.lastScanDate)"
+#   Write-Host "Last SAST run (scan) date: $($PrescriptionJSON.data.prescription.security.activities.sast.lastScanDate)"
   
    # Set the right base command based on platform
   $IO_StageExecution_Polaris = ""
