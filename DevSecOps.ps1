@@ -184,7 +184,7 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
     $EmissionPercentage = $ContentArray[$ContentArray.Length-2] | Out-String
     $EmissionPercentage = $EmissionPercentage.Replace("`n", "")
     
-    if ($EmissionPercentage -contains "*100*") { 
+    if ($EmissionPercentage -Like "*100*") { 
       Write-Host "Language - $EmittedLanguage - Emitted: $EmissionPercentage"
     } else {
       Write-Error "Language - $EmittedLanguage - did not emit 100% ( $EmissionPercentage )"
@@ -196,7 +196,7 @@ if ($IOError -eq "true" -Or $PrescribedActivities -Contains "sast") {
   $ProjectLanguageArray
   $EmittedLanguages
   ForEach($ProjLang in $ProjectLanguageArray) {
-    if (-Not ($ProjLang -in $EmittedLanguages)) {
+    if (-Not ($EmittedLanguages -Contains $ProjLang)) {
       Write-Error "Language - $ProjLang not detected by Polaris."
       $PolarisOnboardingFailure = true
     }
