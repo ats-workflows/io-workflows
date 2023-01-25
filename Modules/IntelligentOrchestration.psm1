@@ -186,6 +186,9 @@ Function IO_GetSynopsysPostScanPolicy() {
 Function IO_CreateProject() {
   Param($IOURL, $IOToken, $ProjectName, $ProjectLanguage)
   
+  $ProjectLanguageArray = $ProjectLanguage.Split(",")
+  $ProjectLanguage = $ProjectLanguageArray[0]
+  
   if(-Not ($ValidProjectLanguages.ContainsKey($ProjectLanguage))) {
     Write-Error "Invalid project language provided."
     Exit 1
